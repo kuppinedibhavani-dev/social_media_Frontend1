@@ -3,7 +3,7 @@ import { AuthContext } from "@/context/AuthContext";
 import { Pencil } from "lucide-react";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000";
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Profile = () => {
   const { user, updateUser } = useContext(AuthContext)!;
