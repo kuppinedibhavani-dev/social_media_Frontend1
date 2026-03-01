@@ -10,8 +10,14 @@ import {
 import { Button } from "../ui/button";
 
 const ProfileImageModal = () => {
-  const { user, login } = useContext(AuthContext);
+  // Hooks MUST be at top level
+  const auth = useContext(AuthContext);
   const [image, setImage] = useState<string | null>(null);
+
+  // If no auth → just render nothing (AFTER hooks)
+  if (!auth) return null;
+
+  const { user, updateUser } = auth;
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -20,12 +26,12 @@ const ProfileImageModal = () => {
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      setImage(reader.result as string);
+      const base64 = reader.result as string;
+      setImage(base64);
 
-      // Save inside AuthContext + localStorage
-      login({
+      updateUser({
         ...user!,
-        profileImage: reader.result as string,
+        avatar_url: base64,
       });
     };
 

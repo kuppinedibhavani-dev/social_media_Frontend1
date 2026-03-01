@@ -16,7 +16,10 @@ interface MobileSidebarProps {
 }
 
 const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
-  const { logout, user } = useContext(AuthContext);
+  const auth = useContext(AuthContext);
+  if (!auth) return null;
+
+  const { logout, user } = auth;
 
   const menuItems = [
     { label: "Dashboard", path: "/", icon: <LayoutDashboard size={20} /> },
@@ -36,14 +39,13 @@ const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
       onClick={onClose}
     >
       <div
-        className={`absolute left-0 top-0 h-full w-64 bg-gray-900 text-white dark:bg-gray-900 p-4 flex flex-col justify-between transform transition-transform duration-300 ${
+        className={`absolute left-0 top-0 h-full w-64 bg-gray-900 text-white p-4 flex flex-col justify-between transform transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ---------- USER PROFILE SECTION ---------- */}
+        {/* USER SECTION */}
         <div className="flex items-center gap-3 mb-6 p-2">
-          {/* Circle Avatar */}
           <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-lg font-bold">
             {firstLetter}
           </div>
@@ -53,7 +55,7 @@ const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
           </div>
         </div>
 
-        {/* ---------- MENU ITEMS ---------- */}
+        {/* MENU */}
         <nav className="flex flex-col gap-3">
           {menuItems.map((item) => (
             <NavLink
@@ -73,7 +75,7 @@ const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
           ))}
         </nav>
 
-        {/* ---------- LOGOUT BUTTON ---------- */}
+        {/* LOGOUT SECTION */}
         <div className="border-t border-gray-700 pt-4">
           <button
             onClick={() => {
