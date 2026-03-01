@@ -1,56 +1,49 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { AuthContext } from "./AuthContext";
+import type { ReactNode } from "react";
 import type { User, AuthContextType } from "./AuthTypes";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL;
-console.log("AUTH PROVIDER API_URL =", API_URL);
+const API = import.meta.env.VITE_BACKEND_URL;
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
+  // Load from localStorage
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    const savedToken = localStorage.getItem("token");
+    Promise.resolve().then(() => {
+      const u = localStorage.getItem("user");
+      const t = localStorage.getItem("token");
 
-    if (savedUser && savedUser !== "undefined" && savedUser !== "null") {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch {
-        localStorage.removeItem("user");
-      }
-    }
-
-    if (savedToken && savedToken !== "undefined" && savedToken !== "null") {
-      setToken(savedToken);
-    }
+      if (u) setUser(JSON.parse(u));
+      if (t) setToken(t);
+    });
   }, []);
 
   // LOGIN
-  const login = async (email: string, password: string) => {
+  const login: AuthContextType["login"] = async (email, password) => {
     try {
-      const res = await axios.post(`${API_URL}/auth/login`, {
-        email,
-        password,
+      const res = await fetch(`${API}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
 
-      const { token, userId } = res.data;
-      const name = email.split("@")[0];
+      if (!res.ok) return false;
+
+      const data = await res.json();
 
       const newUser: User = {
-        id: userId,
+        id: data.userId,
         email,
-        name,
-        avatar_url: undefined,
+        name: email.split("@")[0],
       };
 
       setUser(newUser);
-      setToken(token);
+      setToken(data.token);
 
       localStorage.setItem("user", JSON.stringify(newUser));
-      localStorage.setItem("token", token);
+      localStorage.setItem("token", data.token);
 
       return true;
     } catch {
@@ -59,30 +52,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // REGISTER
-  const register: AuthContextType["register"] = async (
-    name,
-    email,
-    password
-  ) => {
-    setLoading(true);
+  const register: AuthContextType["register"] = async (name, email, password) => {
     try {
-      const res = await axios.post(`${API_URL}/auth/register`, {
-        name,
-        email,
-        password,
+      const res = await fetch(`${API}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
       });
 
-      const { userId } = res.data;
-
-      const newUser = { id: userId, email };
-      setUser(newUser);
-      localStorage.setItem("user", JSON.stringify(newUser));
-
-      return true;
+      return res.ok;
     } catch {
       return false;
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -94,14 +74,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem("token");
   };
 
-  const updateUser = (updated: User) => {
-    setUser(updated);
-    localStorage.setItem("user", JSON.stringify(updated));
+  // UPDATE USER
+  const updateUser = (newUser: User) => {
+    setUser(newUser);
+    localStorage.setItem("user", JSON.stringify(newUser));
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, token, login, register, logout, loading, updateUser }}
+      value={{
+        user,
+        token,
+        login,
+        register,
+        logout,
+        updateUser,
+        loading: false,
+      }}
     >
       {children}
     </AuthContext.Provider>

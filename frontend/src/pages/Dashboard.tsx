@@ -4,7 +4,7 @@ import axios from "axios";
 import { Activity, TrendingUp, Users, CalendarDays } from "lucide-react";
 import { AuthContext } from "@/context/AuthContext";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 interface Post {
   id: string;
