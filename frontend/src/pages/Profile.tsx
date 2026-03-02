@@ -45,7 +45,7 @@ const Profile = () => {
         userId: user?.id,
         name,
         email,
-        password
+        
       });
 
       updateUser(res.data.user);
