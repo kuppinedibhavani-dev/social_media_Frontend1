@@ -10,32 +10,46 @@ import {
 import { Button } from "../ui/button";
 
 const ProfileImageModal = () => {
-  // Hooks MUST be at top level
   const auth = useContext(AuthContext);
   const [image, setImage] = useState<string | null>(null);
 
-  // If no auth → just render nothing (AFTER hooks)
   if (!auth) return null;
 
   const { user, updateUser } = auth;
 
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
+    // Preview
+    const preview = URL.createObjectURL(file);
+    setImage(preview);
 
-    reader.onloadend = () => {
-      const base64 = reader.result as string;
-      setImage(base64);
+    const formData = new FormData();
+    formData.append("avatar", file);
+    formData.append("userId", user!.id);
 
+    // 🔥 Correct backend URL
+    const res = await fetch(
+      "https://social-media-backend1-1.onrender.com/api/avatar/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const data = await res.json();
+    console.log("UPLOAD RESPONSE:", data);
+
+    if (data.avatar_url) {
+      // Update global state
       updateUser({
         ...user!,
-        avatar_url: base64,
+        avatar_url: data.avatar_url,
       });
-    };
-
-    reader.readAsDataURL(file);
+    } else {
+      alert("Upload Failed: " + data.error);
+    }
   };
 
   return (
