@@ -5,7 +5,7 @@ Social Media Content Scheduler (Full Stack Project)
 This application allows users to schedule, organize, and manage content across multiple social media platforms. Users can create posts, set publish dates, store media URLs, and manage their content in an optimized way. The project is built using a full-stack architecture integrating React (Frontend), Node/Express (Backend), and Supabase (Database).
     
     🔗 Live Deployment
-          Netlify URL👉 https://social-media-content-scheduler.netlify.app
+          Netlify URL👉https://socialmediafrontend1.vercel.app/
 
     
 
@@ -59,13 +59,14 @@ The frontend provides an intuitive and modern interface for users to:
                               
 
 (Add images into /assets folder and update paths)
+     Register Page: ./assets/signup.png
+     Login Page:./assets/login.png
+     Dashboard:./assets/dashboard.png
+     Create Post:./assets/create_post.png
 
-![Login Page](./assets/login.png)
-![Dashboard](./assets/dashboard.png)
-![Create Post](./assets/create_post.png)
 🎥 Video Walkthrough Link
 
-(Add your YouTube / Drive link after recording)
+    
 
      👉 https://youtu.be/your-video-link
 
