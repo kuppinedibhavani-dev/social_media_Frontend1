@@ -68,7 +68,7 @@ The frontend provides an intuitive and modern interface for users to:
 
     
 
-     👉 https://youtu.be/your-video-link
+     👉 https://drive.google.com/file/d/1g4pCgKKbMGy5fIovr0l7gq1vDSHHFeZA/view?usp=sharing
 
 
 
